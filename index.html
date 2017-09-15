@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="format-detection" content="telephone=no">
+    <title>Car</title>
+    <style>
+        html, body {
+            padding: 0;
+            margin: 0;
+            overflow: hidden;
+        }
+    </style>
+</head>
+<body>
+
+    <script src="./js/three.js"></script>
+    <script src="./js/OBJLoader.js"></script>
+    <script src="./js/MTLLoader.js"></script>
+    <script src="./js/outside.js"></script>
+    <script src="./js/car.js"></script>
+    <script>
+        var scene = new THREE.Scene();  
+  
+        var camera = new THREE.PerspectiveCamera(90, window.innerWidth/window.innerHeight, 0.1, 1000);
+
+        camera.position.z = 0;
+        camera.position.x = 0;
+        camera.speed = {
+            z: 0,
+            x: 0
+        };
+        
+        var webGLRenderer = new THREE.WebGLRenderer();
+
+        webGLRenderer.setPixelRatio(window.devicePixelRatio);
+        webGLRenderer.setSize(window.innerWidth, window.innerHeight);
+        webGLRenderer.setClearColor(0x0077ec, 1);
+        webGLRenderer.shadowMap.enabled = true;
+        webGLRenderer.shadowMap.type = THREE.PCFShadowMap;
+
+        
+        var pointLight = new THREE.PointLight(0xccbbaa, 1, 0, 0);  
+        pointLight.position.set(-10, 20, -20);
+        pointLight.castShadow = true;
+
+        scene.add(pointLight);
+
+        /*var dirLight = new THREE.DirectionalLight(0xccbbaa, 0.5, 100);
+        dirLight.position.set(-120, 500, -0);
+        dirLight.castShadow = true;
+
+        dirLight.shadow.mapSize.width = 1000;  // default
+        dirLight.shadow.mapSize.height = 1000; // default
+
+        dirLight.shadow.camera.near = 2;
+        dirLight.shadow.camera.far = 1000;
+        dirLight.shadow.camera.left = -50;
+        dirLight.shadow.camera.right = 50;
+        dirLight.shadow.camera.top = 50;
+        dirLight.shadow.camera.bottom = -50;
+
+        scene.add(dirLight);*/
+
+        var light = new THREE.AmbientLight( 0xccbbaa, 0.1 );
+        scene.add( light );
+
+        document.body.appendChild(webGLRenderer.domElement);
+
+        
+
+        function Ground() {
+            var meshBasicMaterial = new THREE.MeshLambertMaterial({
+                color: 0xff0000,
+                side: THREE.DoubleSide
+            });
+            var objLoader = new THREE.OBJLoader();
+
+            objLoader.setPath('./assets/');
+            objLoader.load('ground.obj', function(object) {
+                object.children.forEach(function(item) {
+                    item.receiveShadow = true;
+                });
+                object.position.y = -5;
+
+                
+                scene.add(object);
+
+            }, function() {
+                console.log('progress');
+            }, function() {
+                console.log('error');
+            });
+        }
+
+        document.body.addEventListener('keydown', function(e) {
+            // console.log(e.keyCode);
+            switch(e.keyCode) {
+                case 87: // w
+                    car.run = true;
+                    break;
+                case 65: // a
+                    car.rSpeed = 0.02;
+                    break;
+                case 68: // d
+                    car.rSpeed = -0.02;
+                    break;
+                case 83: // s
+                    break;
+                case 66: // b
+                    ground.more();
+                    break;
+                case 32: // space
+                    car.brake();
+                    break;
+            }
+        });
+
+        document.body.addEventListener('keyup', function(e) {
+            switch(e.keyCode) {
+                case 87: // w
+                    car.run = false;
+                    break;
+                case 65: // a
+                    car.rSpeed = 0;
+                    break;
+                case 68: // d
+                    car.rSpeed = 0;
+                    break;
+                case 83: // s
+                    break;
+                case 32: // space
+                    car.cancelBrake();
+                    break;
+            }
+        });
+
+        var car = new Car({
+            scene: scene,
+            cb: start,
+            light: pointLight
+        });
+
+        var ground;
+
+        function start() {
+            ground = new Ground({
+                scene: scene
+            });
+
+            render();
+        }
+
+        function render() {  
+            car.tick();
+
+            requestAnimationFrame(render);
+            webGLRenderer.render(scene, camera);
+        }
+
+        function isLineSegmentIntr(a, b, c, d) {
+            // console.log(a, b);
+            var area_abc = (a.x - c.x) * (b.y - c.y) - (a.y - c.y) * (b.x - c.x); 
+
+            var area_abd = (a.x - d.x) * (b.y - d.y) - (a.y - d.y) * (b.x - d.x); 
+
+            if(area_abc * area_abd > 0) { 
+                return false; 
+            }
+
+            var area_cda = (c.x - a.x) * (d.y - a.y) - (c.y - a.y) * (d.x - a.x); 
+
+            var area_cdb = area_cda + area_abc - area_abd ; 
+            if(area_cda * area_cdb > 0) { 
+                return false; 
+            } 
+
+            return true;
+        }
+    </script>
+</body>
+</html>
