@@ -114,19 +114,19 @@ Car.prototype.tick = function() {
     var speedX = Math.sin(rotation) * speed;
     var speedZ = Math.cos(rotation) * speed;
 
+ 
     var tempX = this.car.position.x + speedX;
     var tempZ = this.car.position.z + speedZ;
-
-
-/*this.light.shadow.camera.left = (tempZ-50+20) >> 0;
+/* 
+this.light.shadow.camera.left = (tempZ-50+20) >> 0;
 this.light.shadow.camera.right = (tempZ+50+20) >> 0;
 this.light.shadow.camera.top = (tempX+50) >> 0;
 this.light.shadow.camera.bottom = (tempX-50) >> 0;
 this.light.position.set(-120+tempX, 500, tempZ);
 this.light.shadow.camera.updateProjectionMatrix();*/
 
-this.light.position.set(-10+tempX, 20, tempZ);
-this.light.shadow.camera.updateProjectionMatrix();
+    this.light.position.set(-10+tempX, 20, tempZ);
+    this.light.shadow.camera.updateProjectionMatrix();
 
     var tempA = -(this.car.rotation.y + 0.523);
     this.leftFront.x = Math.sin(tempA) * 8 + tempX;

@@ -50,8 +50,8 @@
         dirLight.position.set(-120, 500, -0);
         dirLight.castShadow = true;
 
-        dirLight.shadow.mapSize.width = 1000;  // default
-        dirLight.shadow.mapSize.height = 1000; // default
+        dirLight.shadow.mapSize.width = 1000;
+        dirLight.shadow.mapSize.height = 1000;
 
         dirLight.shadow.camera.near = 2;
         dirLight.shadow.camera.far = 1000;
@@ -105,11 +105,6 @@
                 case 68: // d
                     car.rSpeed = -0.02;
                     break;
-                case 83: // s
-                    break;
-                case 66: // b
-                    ground.more();
-                    break;
                 case 32: // space
                     car.brake();
                     break;
@@ -126,8 +121,6 @@
                     break;
                 case 68: // d
                     car.rSpeed = 0;
-                    break;
-                case 83: // s
                     break;
                 case 32: // space
                     car.cancelBrake();
@@ -156,26 +149,6 @@
 
             requestAnimationFrame(render);
             webGLRenderer.render(scene, camera);
-        }
-
-        function isLineSegmentIntr(a, b, c, d) {
-            // console.log(a, b);
-            var area_abc = (a.x - c.x) * (b.y - c.y) - (a.y - c.y) * (b.x - c.x); 
-
-            var area_abd = (a.x - d.x) * (b.y - d.y) - (a.y - d.y) * (b.x - d.x); 
-
-            if(area_abc * area_abd > 0) { 
-                return false; 
-            }
-
-            var area_cda = (c.x - a.x) * (d.y - a.y) - (c.y - a.y) * (d.x - a.x); 
-
-            var area_cdb = area_cda + area_abc - area_abd ; 
-            if(area_cda * area_cdb > 0) { 
-                return false; 
-            } 
-
-            return true;
         }
     </script>
 </body>
